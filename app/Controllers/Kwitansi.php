@@ -26,17 +26,11 @@ class Kwitansi extends BaseController
     }
 
     public function print($id)
-    {
-        
+    {      
+        // Ambil data kwitansi berdasarkan ID
         $kwitansi = $this->kwitansiModel->find($id);
-        $html = view('kwitansi/print', ['kwitansi' => $kwitansi]);
-
-        // Generate PDF
-        $dompdf = new Dompdf();
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-        $dompdf->stream('kwitansi_' . $kwitansi['no_kwitansi'] . '.pdf', ['Attachment' => false]);
+        // Tampilkan view print tanpa PDF
+        return view('kwitansi/print', ['kwitansi' => $kwitansi]);
     }
     public function generateNoKwitansi()
 {

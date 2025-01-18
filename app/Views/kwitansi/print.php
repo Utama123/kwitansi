@@ -7,7 +7,20 @@
     <link rel="stylesheet" href="<?=base_url();?>/assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?=base_url();?>/assets/fonts/font-awesome.min.css">
     <link rel="stylesheet" href="<?=base_url();?>/assets/css/styles.min.css"> 
+    <style>
+        /* Tambahkan gaya cetak khusus jika diperlukan */
+        @media print {
+    body {
+        font-size: 12px;
+        color: black;
+    }
 
+    .no-print {
+        display: none; /* Sembunyikan elemen seperti tombol cetak */
+    }
+}
+
+    </style>
 </head>
 <body>
 <?php
@@ -91,7 +104,6 @@
                             <th class="opacity-2">No Kwitansi</th>
                             <th>Nama Penerima</th>
                             <th>Jumlah</th>
-                            <th>Terbilang</th>
                             <th>Tanggal</th>
                             <th>Keterangan</th>
                         </tr>
@@ -103,21 +115,66 @@
                         <td> <?= $kwitansi['no_kwitansi']; ?></td>
                         <td> <?= $kwitansi['nama_penerima']; ?></td>
                         <td><?= number_format($kwitansi['jumlah'], 2); ?></td>
-                        <td> <?= ucfirst(terbilang($kwitansi['jumlah'])) . ' rutdiah'; ?></td>
                         <td> <?= $kwitansi['tanggal']; ?></td>
                         <td> <?= $kwitansi['keterangan']; ?></td>
+                        </tr>
+                        <td></td>
+                        <tr>
+                            <td>Terbilang</td>
+                            <td></td>
+                            <td></td>
+                            <td><td> <?= ucfirst(terbilang($kwitansi['jumlah'])) . ' Rupiah'; ?></td></td>
                         </tr> 
                     </tbody>
                 </table>
             </div>
                     <hr />
-
+                        <div></div>
+                        <!-- Tombol cetak dan simpan PDF -->
+                        <div class="no-print">
+                            <button onclick="openPrintPage()">Cetak</button>
+                            <button onclick="savePdf()">Simpan PDF</button>
+                        </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-    <script src="<?=base_url();?>/assets/bootstrap/js/bootstrap.min.js"></script> 
-</body>
-</html>
 
+
+
+
+    <!-- HTML2PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+
+    <script>
+        // Fungsi untuk membuka halaman cetak di tab baru
+        function openPrintPage() {
+            var printWindow = window.open('<?= site_url('kwitansi/print/' . $kwitansi['id']); ?>', '_blank');
+            printWindow.onload = function() {
+                printWindow.print();
+            }
+        }
+
+        // Fungsi untuk menyimpan PDF menggunakan HTML2PDF.js
+        function savePdf() {
+            const element = document.getElementById('kwitansi'); // Ambil elemen kwitansi
+            const opt = {
+                margin:       1,
+                filename:     'kwitansi_<?= $kwitansi['no_kwitansi']; ?>.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { dpi: 192, letterRendering: true },
+                jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            html2pdf().from(element).set(opt).save();
+        }
+    </script>
+
+
+    <script src="<?=base_url();?>/assets/bootstrap/js/bootstrap.min.js"></script> 
+</body> 
+
+
+
+
+</html>
